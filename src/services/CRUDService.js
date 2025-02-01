@@ -26,4 +26,11 @@ const updateUserById = async (email, city, myname, userId) => {
   return results;
 };
 
-module.exports = { getAllUsers, getUserById, updateUserById };
+const deleteUserById = async (id) => {
+  let [results, fields] = await connection.query(
+    `DELETE FROM Users WHERE id = ?`,
+    [id]
+  );
+};
+
+module.exports = { getAllUsers, getUserById, updateUserById, deleteUserById };
