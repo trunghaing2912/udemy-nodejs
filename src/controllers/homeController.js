@@ -1,5 +1,9 @@
 const connection = require("../config/database");
-const { getAllUsers } = require("../services/CRUDService");
+const {
+  getAllUsers,
+  getUserById,
+  updateUserById,
+} = require("../services/CRUDService");
 
 const getHomepage = async (req, res) => {
   let results = await getAllUsers();
@@ -10,8 +14,12 @@ const getCreatePage = (req, res) => {
   res.render("create.ejs");
 };
 
-const getUpdatePage = (req, res) => {
-  res.render("edit.ejs");
+const getUpdatePage = async (req, res) => {
+  const userId = req.params.id;
+
+  let user = await getUserById(userId);
+
+  res.render("edit.ejs", { userEdit: user });
 };
 
 const postCreateUser = async (req, res) => {
@@ -22,12 +30,15 @@ const postCreateUser = async (req, res) => {
     [email, myname, city]
   );
 
-  console.log(">>> check results: ", results);
+  res.redirect("/");
+};
 
-  res.send("Created user succeed!");
+const postUpdateUser = async (req, res) => {
+  let { userId, email, myname, city } = req.body;
 
-  // const [results, fields] = await connection.query("SELECT * FROM Users u");
-  // console.log(">>> check results", results);
+  await updateUserById(email, myname, city, userId);
+
+  res.redirect("/");
 };
 
 module.exports = {
@@ -35,4 +46,5 @@ module.exports = {
   getCreatePage,
   getUpdatePage,
   postCreateUser,
+  postUpdateUser,
 };
